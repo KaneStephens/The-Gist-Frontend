@@ -5,6 +5,9 @@ import {
   Geographies,
   Geography
 } from "react-simple-maps";
+import Data from './englishData'
+
+console.log(Data['Indonesia'])
 
 const geoUrl =
   "https://raw.githubusercontent.com/zcreativelabs/react-simple-maps/master/topojson-maps/world-110m.json";
@@ -32,7 +35,7 @@ const MapChart = ({ setTooltipContent }) => {
                   geography={geo}
                   onMouseEnter={() => {
                     const { NAME, POP_EST } = geo.properties;
-                    setTooltipContent(`${NAME} — ${rounded(POP_EST)}`);
+                    setTooltipContent(`${NAME} — ${Data[NAME] && Object.keys(Data[NAME]).includes("English") ? rounded(Number(Data[NAME].English)) : rounded(POP_EST)}`);
                   }}
                   onMouseLeave={() => {
                     setTooltipContent("");
