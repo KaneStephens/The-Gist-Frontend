@@ -16,14 +16,12 @@ class App extends React.Component {
     content: '',
     setContent: '',
     chartData: {
-      labels: ["1", "2", "3", "4", "5"],
-      datasets: [
-        {
-          label: "Usage over Time",
-          backgroundColor: "rgba(255, 0, 255, 0.75)",
-          data: [4, 5, 1, 10, 32, 2, 12]
-        }
-      ]
+      labels: ["1", "2", "3", "4", "5", "6", "7"],
+      datasets: [{
+        label: "Usage over Time",
+        backgroundColor: "rgba(255, 0, 255, 0.75)",
+        data: [4, 5, 1, 10, 32, 2, 12]
+      }]
     }
   }
 
@@ -52,7 +50,13 @@ class App extends React.Component {
   }
 
   setTooltipContent = (value) => {
-    this.setState({ setContent: value })
+    this.setState({ content: value })
+  }
+
+  renderGraph = (data) => {
+    let values = this.sanitise(data)
+    let [newLabels, newDataset] = values
+    this.setGraphData(newLabels, newDataset)
   }
 
   setGraphData = (label, data) => {
@@ -60,48 +64,31 @@ class App extends React.Component {
       chartData: {
         labels: label,
         datasets: [
-          // add the rest of the data here
+          {
+            label: "Usage over Time",
+            backgroundColor: "rgba(255, 0, 255, 0.75)",
+            data: data
+          }
         ]
       }
     })
   }
 
-  sanitise = (data) => {
+  sanitise = () => {
     const newLabels = []
     const newDataset = []
-    const newData = data.split('|')
+    const newData = this.state.data.split('|')
     const myData = newData.map(item => item.split(":"))
     myData.forEach(element => {
       newLabels.push(element[0])
       newDataset.push(element[1])
     })
     const finalDataset = newDataset.map(element => (Number(element) / 100))
-
-    console.log(newLabels)
-
-    console.log(finalDataset)
+    // return [newLabels, finalDataset]
+    this.setGraphData(newLabels, finalDataset)
   }
 
-
-  // setGradientColor = (canvas, color) => {
-  //   const ctx = canvas.getContext('2d');
-  //   const gradient = ctx.createLinearGradient(0, 0, 600, 550);
-  //   gradient.addColorStop(0, color);
-  //   gradient.addColorStop(0.95, "rgba(133, 122, 144, 0.5)");
-  //   return gradient;
-  // }
-
-  // getChartData = canvas => {
-  //   const data = this.state.chartData;
-  //   if (data.datasets) {
-  //     let colors = ["rgba(255, 0, 255, 0.75)", "rgba(0, 255, 0, 0.75"]
-  //     data.datasets.forEach((set, i) => {
-  //       set.backgroundColor = this.setGradientColor(canvas, colors[i]);
-  //       set.borderColor = "white";
-  //       set.borderWidth = 2;
-  //     })
-  //   }
-  // }
+  // this.renderGraph(this.state.data)
 
   render() {
     return (
@@ -118,7 +105,7 @@ class App extends React.Component {
               <li><a href="#search">search</a></li>
               <li><a href="#overview">overview</a></li>
               <li><a href="#etymology">etymology</a></li>
-              <li><a href="#usage">usage</a></li>
+              <li><a href="#usage" onClick={this.sanitise}>usage</a></li>
             </ul>
           </div>
           <section id="search">
@@ -137,10 +124,10 @@ class App extends React.Component {
 
           <section id="overview">
             <h2>overview</h2>
-
-            <MapChart setTooltipContent={this.setTooltipContent} />
-            <ReactTooltip>{this.state.content}</ReactTooltip>
-
+            
+              <MapChart setTooltipContent={this.setTooltipContent} />
+              <ReactTooltip>{this.state.content}</ReactTooltip>
+            
             <p>{this.state.definition} </p>
           </section>
 
@@ -163,7 +150,7 @@ class App extends React.Component {
                 data={this.state.chartData}
               />
             </div>
-            <p>{this.sanitise(this.state.data)} </p>
+          <p></p>
           </section>
 
 
