@@ -53,12 +53,6 @@ class App extends React.Component {
     this.setState({ content: value })
   }
 
-  renderGraph = (data) => {
-    let values = this.sanitise(data)
-    let [newLabels, newDataset] = values
-    this.setGraphData(newLabels, newDataset)
-  }
-
   setGraphData = (label, data) => {
     this.setState({
       chartData: {
@@ -80,7 +74,7 @@ class App extends React.Component {
     const newData = this.state.data.split('|')
     const myData = newData.map(item => item.split(":"))
     myData.forEach(element => {
-      newLabels.push(element[0])
+      newLabels.push(2008 - element[0])
       newDataset.push(element[1])
     })
     const finalDataset = newDataset.map(element => (Number(element) / 100))
@@ -109,7 +103,7 @@ class App extends React.Component {
             </ul>
           </div>
           <section id="search">
-            <h2>search</h2>
+            <h2>The Gist</h2>
             <form onSubmit={this.fetchIt}>
               <div className="ui input focus">
                 <input onChange={this.handleChange} placeholder="Search"></input>
@@ -124,11 +118,16 @@ class App extends React.Component {
 
           <section id="overview">
             <h2>overview</h2>
-            
-              <MapChart setTooltipContent={this.setTooltipContent} />
-              <ReactTooltip>{this.state.content}</ReactTooltip>
-            
-            <p>{this.state.definition} </p>
+            <div className='row'>
+              <div className='col-2 descriptionText'>
+                <p>{this.state.definition} my butt </p>
+              </div>
+              <div className='col-6 offset-1'>
+                <MapChart setTooltipContent={this.setTooltipContent} />
+                <ReactTooltip>{this.state.content}</ReactTooltip>
+              </div>
+            </div>
+
           </section>
 
 
@@ -142,27 +141,29 @@ class App extends React.Component {
 
           <section id="usage">
             <h2>usage</h2>
-            <div style={{ position: 'relative', width: 600, height: 550 }}>
-              <Line
-                options={{
-                  responsive: true
-                }}
-                data={this.state.chartData}
-              />
+            <div className='row'>
+              <div className='col-3 offset-1'>
+                <p className='descriptionText'>To the right is the usage data for the word "{this.state.currentWord}". <br></br><br></br> By hovering on any point, you can see the number of times a word can be found in a sample text of One Million words. <br></br><br></br> {this.state.chartData.datasets[0].data[4]} </p>
+              </div>
+              <div className='col-6 offset-1'>
+                <div className='dataGraph' style={{ position: 'relative', width: 700, height: 350 }}>
+                  <Line
+                    options={{
+                      responsive: true
+                    }}
+                    data={this.state.chartData}
+                  />
+                </div>
+                <div className='col-1'></div>
+              </div>
             </div>
-          <p></p>
+
+
           </section>
 
-
-
-
         </div>
+
       </>
-
-
-
-
-
     );
   }
 }

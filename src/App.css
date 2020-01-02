@@ -5,7 +5,11 @@
 .map-div {
   width: 900px;
   height: 600px;
-  
+}
+
+.descriptionText {
+  font-size: 18px;
+
 }
 
 .chartjs-render-monitor {
@@ -15,6 +19,7 @@
 .rsm-svg {
   width: 850px;
   height: 500px; 
+
 }
 
 *,

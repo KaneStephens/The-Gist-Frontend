@@ -35,7 +35,7 @@ const MapChart = ({ setTooltipContent }) => {
                   geography={geo}
                   onMouseEnter={() => {
                     const { NAME, POP_EST } = geo.properties;
-                    setTooltipContent(`${NAME} — ${Data[NAME] && Object.keys(Data[NAME]).includes("English") ? rounded(Number(Data[NAME].English)) : rounded(POP_EST)}`);
+                    setTooltipContent(`${NAME} — ${Data[NAME] && Object.keys(Data[NAME]).includes("English") ? rounded(Number(Data[NAME].English)) + ' People speak english, according to ' + Data[NAME].year + ' Census Data' : rounded(POP_EST) + ' people live here!'}`);
                   }}
                   onMouseLeave={() => {
                     setTooltipContent("");
