@@ -9,7 +9,6 @@
 
 .descriptionText {
   font-size: 18px;
-
 }
 
 .chartjs-render-monitor {
@@ -17,9 +16,8 @@
 }
 
 .rsm-svg {
-  width: 850px;
-  height: 500px; 
-
+  width: 750px;
+  height: 450px; 
 }
 
 *,

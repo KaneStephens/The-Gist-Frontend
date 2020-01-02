@@ -119,8 +119,9 @@ class App extends React.Component {
           <section id="overview">
             <h2>overview</h2>
             <div className='row'>
-              <div className='col-2 descriptionText'>
-                <p>{this.state.definition} my butt </p>
+              <div className='col-1'></div>
+              <div className='col-3 descriptionText'>
+                <p><br></br><br></br> {this.state.definition} <br></br><br></br> The Gist does not currently have any data on the english speaking population of {this.state.content.split('-')[0]} (although we suspect there may be a few).<br></br><br></br> If you're someone in the know, please send an email to thegistdata@gmail.com and we'll get back to you as soon as possible.    </p>
               </div>
               <div className='col-6 offset-1'>
                 <MapChart setTooltipContent={this.setTooltipContent} />
