@@ -29,15 +29,25 @@
 body {
   position: relative;
   margin: 0;
-  overflow: hidden;
+  /* overflow: hidden; */
   display: flex;
-  height: 100vh;
+  /* height: 100vh; */
   flex-direction: column;
   line-height: 1.5;
   font-family: "Montserrat", sans-serif;
   font-size: 62.5%;
   color: #f4f4f4;
   background-color: #1d1e22;
+}
+
+.funText {
+  font-size: 26px;
+  text-align: center;
+}
+
+.error {
+  font-size: 18px;
+  text-align: center;
 }
 
 .scrolls {
@@ -58,7 +68,7 @@ body {
   font-size: 0.825rem;
 }
 
-.smooth {
+/* .smooth {
   position: relative;
   width: 100%;
   height: 100%;
@@ -67,7 +77,7 @@ body {
   scroll-snap-type: mandatory;
   scroll-snap-points-y: repeat(100vh);
   scroll-snap-type: y mandatory;
-}
+} */
 
 .header {
   position: fixed;

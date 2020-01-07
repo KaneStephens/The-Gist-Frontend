@@ -25,8 +25,20 @@ class App extends React.Component {
     }
   }
 
+  hasWord = () => this.state.definition.length > 0
+
+  scrollToDefinition = () => {
+    window.location.href = '#definition'
+    // window.scrollTo(0, document.querySelector('#definition'))
+  }
+
   fetchIt = (e) => {
     e.preventDefault()
+
+    this.setState({
+      waitingForResponse: true,
+      errorMessage: undefined
+    })
 
     fetch('http://localhost:3000/bot', {
       method: 'POST',
@@ -36,12 +48,30 @@ class App extends React.Component {
       }, body:
         JSON.stringify({ word: this.state.currentWord })
     })
-      .then(res => res.json())
+      .then(res => {
+        if (res.ok)
+          return res.json()
+        else
+          res.json().then(error => {
+            this.setState({
+              waitingForResponse: false,
+              errorMessage: error.message
+            })
+          })
+      })
       .then(results => this.setState({
+        waitingForResponse: false,
         definition: results['word']['definition'],
         etymology: results['word']['etymology'],
         data: results['word']['frequency']
+      }, () => {
+        this.scrollToDefinition()
+        const [newLabels, finalDataset] = this.sanitise(this.state.data)
+        this.setGraphData(newLabels, finalDataset)
       }))
+      .catch(() => {
+
+      })
 
   }
 
@@ -68,18 +98,17 @@ class App extends React.Component {
     })
   }
 
-  sanitise = () => {
+  sanitise = (data) => {
     const newLabels = []
     const newDataset = []
-    const newData = this.state.data.split('|')
+    const newData = data.split('|')
     const myData = newData.map(item => item.split(":"))
     myData.forEach(element => {
       newLabels.push(2008 - element[0])
       newDataset.push(element[1])
     })
     const finalDataset = newDataset.map(element => (Number(element) / 100))
-    // return [newLabels, finalDataset]
-    this.setGraphData(newLabels, finalDataset)
+    return [newLabels, finalDataset]
   }
 
   // this.renderGraph(this.state.data)
@@ -87,80 +116,96 @@ class App extends React.Component {
   render() {
     return (
       <>
-        <div className="scrolls">
+        {/* <div className="scrolls">
           <div className="up"><span>↑</span>
             <div className="center"><span>mouse <br></br> scrolling </span> </div>
           </div>
           <div className="down"><span>↓</span></div>
-        </div>
+        </div> */}
         <div className="smooth">
           <div className="header">
             <ul>
               <li><a href="#search">search</a></li>
-              <li><a href="#overview">overview</a></li>
-              <li><a href="#etymology">etymology</a></li>
-              <li><a href="#usage" onClick={this.sanitise}>usage</a></li>
+              {
+                this.hasWord() && <>
+                  <li><a href="#definition">definition</a></li>
+                  <li><a href="#etymology">etymology</a></li>
+                  <li><a href="#usage">usage</a></li>
+                </>
+              }
             </ul>
           </div>
           <section id="search">
             <h2>The Gist</h2>
             <form onSubmit={this.fetchIt}>
-              <div className="ui input focus">
-                <input onChange={this.handleChange} placeholder="Search"></input>
-                <button className='ui button' type='submit' >Search</button>
+              <div className="ui input focus">  
+                <input required onChange={this.handleChange} placeholder="Search"></input>
+                <button className={`ui button${this.state.waitingForResponse ? ' loading' : ''}`} type='submit' >Search</button>
+              </div>
+              <div>
+                {this.state.errorMessage && <p class="error">{this.state.errorMessage}</p>}
               </div>
             </form>
           </section>
 
 
 
+          {
+            this.hasWord() && <>
 
-
-          <section id="overview">
-            <h2>overview</h2>
-            <div className='row'>
-              <div className='col-1'></div>
-              <div className='col-3 descriptionText'>
-                <p><br></br><br></br> {this.state.definition} <br></br><br></br> The Gist does not currently have any data on the english speaking population of {this.state.content.split('-')[0]} (although we suspect there may be a few).<br></br><br></br> If you're someone in the know, please send an email to thegistdata@gmail.com and we'll get back to you as soon as possible.    </p>
-              </div>
-              <div className='col-6 offset-1'>
+              <section id="definition">
+                <h2>definition</h2>
+                
+                  
+                  <div>
+                    <p className='funText col-6 offset-3'>{this.state.definition}</p>
+                  </div>
+                  <div className='col-3'></div>
+                  {/* <div className='fun'>
                 <MapChart setTooltipContent={this.setTooltipContent} />
                 <ReactTooltip>{this.state.content}</ReactTooltip>
-              </div>
-            </div>
+              </div> */}
+              
 
-          </section>
-
-
-
-          <section id="etymology">
-            <h2>etymology</h2>
-            <p>{this.state.etymology} </p>
-          </section>
+              </section>
 
 
 
-          <section id="usage">
-            <h2>usage</h2>
-            <div className='row'>
-              <div className='col-3 offset-1'>
-                <p className='descriptionText'>To the right is the usage data for the word "{this.state.currentWord}". <br></br><br></br> By hovering on any point, you can see the number of times a word can be found in a sample text of One Million words. <br></br><br></br> {this.state.chartData.datasets[0].data[4]} </p>
-              </div>
-              <div className='col-6 offset-1'>
-                <div className='dataGraph' style={{ position: 'relative', width: 700, height: 350 }}>
-                  <Line
-                    options={{
-                      responsive: true
-                    }}
-                    data={this.state.chartData}
-                  />
+              <section id="etymology">
+                <h2>etymology</h2>
+                <p className='funText'>{this.state.etymology} </p>
+              </section>
+
+
+
+              <section id="usage">
+                <h2>usage</h2>
+                <div className='row'>
+                  <div className='col-3 offset-1'>
+                    <p className='descriptionText'>
+                      To the right is the usage data for the word "{this.state.currentWord}". <br></br><br></br>
+                      By hovering on any point, you can see the number of times a word can be found in a sample text of One Million words.
+                      <br></br><br></br> 
+                    </p>
+                  </div>
+                  <div className='col-6 offset-1'>
+                    <div className='dataGraph' style={{ position: 'relative', width: 700, height: 350 }}>
+                      <Line
+                        options={{
+                          responsive: true
+                        }}
+                        data={this.state.chartData}
+                      />
+                    </div>
+                    <div className='col-1'></div>
+                  </div>
                 </div>
-                <div className='col-1'></div>
-              </div>
-            </div>
 
 
-          </section>
+              </section>
+
+            </>
+          }
 
         </div>
 
